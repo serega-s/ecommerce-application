@@ -1,4 +1,4 @@
-# GanarCRM
+# Ecommerce
 
 ![avatar](djackets_imgs/djackets-1.png)
 ![avatar](djackets_imgs/djackets-2.png)
