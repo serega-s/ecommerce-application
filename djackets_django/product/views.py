@@ -1,20 +1,24 @@
 from django.db.models import Q
 from django.http import Http404
-
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
-from .models import Product, Category
-from .serializers import ProductSerializer, CategorySerializer
+from .models import Category, Product
+from .serializers import CategorySerializer, ProductSerializer
+
 
 class LatestProductsList(APIView):
+    permission_classes = (AllowAny, )
     def get(self, request, format=None):
         products = Product.objects.all()[0:4]
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
 class ProductDetail(APIView):
+    permission_classes = (AllowAny, )
+
     def get_object(self, category_slug, product_slug):
         try:
             return Product.objects.filter(category__slug=category_slug).get(slug=product_slug)
@@ -27,6 +31,7 @@ class ProductDetail(APIView):
         return Response(serializer.data)
 
 class CategoryDetail(APIView):
+    permission_classes = (AllowAny, )
     def get_object(self, category_slug):
         try:
             return Category.objects.get(slug=category_slug)
@@ -39,6 +44,7 @@ class CategoryDetail(APIView):
         return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def search(request):
     query = request.data.get('query', '')
 

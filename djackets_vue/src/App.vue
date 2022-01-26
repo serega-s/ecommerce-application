@@ -2,29 +2,46 @@
   <div id="wrapper">
     <nav class="navbar is-dark">
       <div class="navbar-brand">
-        <router-link to="/" class="navbar-item"><strong>Djackets</strong></router-link>
+        <router-link to="/" class="navbar-item"
+          ><strong>Djackets</strong></router-link
+        >
 
-        <a class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu" @click="showMobileMenu = !showMobileMenu">
+        <a
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="navbar-menu"
+          @click="showMobileMenu = !showMobileMenu"
+        >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
       </div>
 
-      <div class="navbar-menu" id="navbar-menu" v-bind:class="{'is-active': showMobileMenu }">
+      <div
+        class="navbar-menu"
+        id="navbar-menu"
+        v-bind:class="{ 'is-active': showMobileMenu }"
+      >
         <div class="navbar-start">
           <div class="navbar-item">
             <form method="get" action="/search">
               <div class="field has-addons">
                 <div class="control">
-                  <input type="text" class="input" placeholder="What are you looking for?" name="query">
+                  <input
+                    type="text"
+                    class="input"
+                    placeholder="What are you looking for?"
+                    name="query"
+                  />
                 </div>
 
                 <div class="control">
                   <button class="button is-success">
-                      <span class="icon">
+                    <span class="icon">
                       <i class="fas fa-search"></i>
-                      </span>
+                    </span>
                   </button>
                 </div>
               </div>
@@ -39,16 +56,20 @@
           <div class="navbar-item">
             <div class="buttons">
               <template v-if="$store.state.isAuthenticated">
-                <router-link to="/my-account" class="button is-light">My account</router-link>
+                <router-link to="/my-account" class="button is-light"
+                  >My account</router-link
+                >
               </template>
 
               <template v-else>
-                <router-link to="/log-in" class="button is-light">Log in</router-link>
+                <router-link to="/log-in" class="button is-light"
+                  >Log in</router-link
+                >
               </template>
 
               <router-link to="/cart" class="button is-success">
                 <span class="icon"><i class="fas fa-shopping-cart"></i></span>
-                <span>Cart ({{ cartTotalLength }})</span>
+                <span>Cart ({{ parseInt(cartTotalLength) }})</span>
               </router-link>
             </div>
           </div>
@@ -56,12 +77,28 @@
       </div>
     </nav>
 
-    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading }">
-      <div class="lds-dual-ring"></div>
+    <div
+      class="is-loading-bar has-text-centered"
+      :class="{ 'is-loading': $store.state.isLoading }"
+    >
+      <div class="lds-default">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
 
     <section class="section">
-      <router-view/>
+      <router-view />
     </section>
 
     <footer class="footer">
@@ -71,47 +108,47 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios"
 
 export default {
   data() {
     return {
       showMobileMenu: false,
       cart: {
-        items: []
-      }
+        items: [],
+      },
     }
   },
   beforeCreate() {
-    this.$store.commit('initializeStore')
+    this.$store.commit("initializeStore")
 
     const token = this.$store.state.token
 
     if (token) {
-        axios.defaults.headers.common['Authorization'] = "Token " + token
+      axios.defaults.headers.common["Authorization"] = "Token " + token
     } else {
-        axios.defaults.headers.common['Authorization'] = ""
+      axios.defaults.headers.common["Authorization"] = ""
     }
   },
   mounted() {
     this.cart = this.$store.state.cart
   },
   computed: {
-      cartTotalLength() {
-          let totalLength = 0
+    cartTotalLength() {
+      let totalLength = 0
 
-          for (let i = 0; i < this.cart.items.length; i++) {
-              totalLength += this.cart.items[i].quantity
-          }
-
-          return totalLength
+      for (let i = 0; i < this.cart.items.length; i++) {
+        totalLength += this.cart.items[i].quantity
       }
-  }
+
+      return totalLength
+    },
+  },
 }
 </script>
 
 <style lang="scss">
-@import '../node_modules/bulma';
+@import "../node_modules/bulma";
 
 .lds-dual-ring {
   display: inline-block;
@@ -147,6 +184,92 @@ export default {
 
   &.is-loading {
     height: 80px;
+  }
+}
+
+.lds-default {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-default div {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgb(47, 50, 83);
+  border-radius: 50%;
+  animation: lds-default 1.2s linear infinite;
+}
+.lds-default div:nth-child(1) {
+  animation-delay: 0s;
+  top: 37px;
+  left: 66px;
+}
+.lds-default div:nth-child(2) {
+  animation-delay: -0.1s;
+  top: 22px;
+  left: 62px;
+}
+.lds-default div:nth-child(3) {
+  animation-delay: -0.2s;
+  top: 11px;
+  left: 52px;
+}
+.lds-default div:nth-child(4) {
+  animation-delay: -0.3s;
+  top: 7px;
+  left: 37px;
+}
+.lds-default div:nth-child(5) {
+  animation-delay: -0.4s;
+  top: 11px;
+  left: 22px;
+}
+.lds-default div:nth-child(6) {
+  animation-delay: -0.5s;
+  top: 22px;
+  left: 11px;
+}
+.lds-default div:nth-child(7) {
+  animation-delay: -0.6s;
+  top: 37px;
+  left: 7px;
+}
+.lds-default div:nth-child(8) {
+  animation-delay: -0.7s;
+  top: 52px;
+  left: 11px;
+}
+.lds-default div:nth-child(9) {
+  animation-delay: -0.8s;
+  top: 62px;
+  left: 22px;
+}
+.lds-default div:nth-child(10) {
+  animation-delay: -0.9s;
+  top: 66px;
+  left: 37px;
+}
+.lds-default div:nth-child(11) {
+  animation-delay: -1s;
+  top: 62px;
+  left: 52px;
+}
+.lds-default div:nth-child(12) {
+  animation-delay: -1.1s;
+  top: 52px;
+  left: 62px;
+}
+@keyframes lds-default {
+  0%,
+  20%,
+  80%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
   }
 }
 </style>

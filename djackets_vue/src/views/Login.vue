@@ -1,35 +1,49 @@
 <template>
-  <div class="login-page">
+  <div class="container">
     <div class="columns">
       <div class="column is-4 is-offset-4">
-        <h1 class="title">Login</h1>
+        <h1 class="title">Log in</h1>
 
         <form @submit.prevent="submitForm">
           <div class="field">
             <label for="username">Username</label>
             <div class="control">
-              <input type="text" class="input" v-model="username" />
+              <input
+                type="text"
+                class="input"
+                v-model="username"
+                name="username"
+                placeholder="Username"
+              />
             </div>
           </div>
 
           <div class="field">
-            <label for="username">Password</label>
+            <label>Password</label>
             <div class="control">
-              <input type="password" class="input" v-model="password" />
+              <input
+                type="password"
+                class="input"
+                v-model="password"
+                name="password"
+                placeholder="Password"
+              />
             </div>
           </div>
+
           <div class="notification is-danger" v-if="errors.length">
-            <p v-for="error in errors" :key="error">{{ error }}</p>
+            <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
           </div>
 
           <div class="field">
             <div class="control">
-              <button class="button is-dark">Sign In</button>
+              <button class="button is-dark">Log in</button>
             </div>
           </div>
+
           <hr />
 
-          Or <router-link to="/sign-up">click here</router-link> to sign up
+          Or <router-link to="/sign-up">click here</router-link> to sign up!
         </form>
       </div>
     </div>
@@ -39,7 +53,7 @@
 <script>
 import axios from "axios"
 export default {
-  name: "Login",
+  name: "LogIn",
   data() {
     return {
       username: "",
@@ -52,8 +66,9 @@ export default {
   },
   methods: {
     async submitForm() {
-      axios.defaults.headers.common["Authorization"] = ""
+      this.$store.commit("setIsLoading", true)
 
+      axios.defaults.headers.common["Authorization"] = ""
       localStorage.removeItem("token")
 
       const formData = {
@@ -61,18 +76,16 @@ export default {
         password: this.password,
       }
 
-      axios
+      await axios
         .post("/api/v1/token/login/", formData)
         .then((response) => {
           const token = response.data.auth_token
-
           this.$store.commit("setToken", token)
 
           axios.defaults.headers.common["Authorization"] = "Token " + token
           localStorage.setItem("token", token)
 
           const toPath = this.$route.query.to || "/cart"
-
           this.$router.push(toPath)
         })
         .catch((error) => {
@@ -83,12 +96,28 @@ export default {
           } else {
             this.errors.push("Something went wrong. Please try again")
 
-            console.log(JSON.stringify(error))
+            console.log(error.response)
           }
         })
+
+      await axios
+        .get("/api/v1/users/me/")
+        .then((response) => {
+          this.$store.commit("setUser", {
+            id: response.data.id,
+            email: response.data.email,
+            username: response.data.username,
+          })
+          localStorage.setItem("username", response.data.username)
+          localStorage.setItem("useremail", response.data.email)
+          localStorage.setItem("userid", response.data.id)
+        })
+        .catch((error) => {
+          console.log(error.response)
+        })
+
+      this.$store.commit("setIsLoading", false)
     },
   },
 }
 </script>
-
-<style lang="scss" scoped></style>
